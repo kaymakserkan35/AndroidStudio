@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    app:layout_marginBaseline="1dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            tools:src="@tools:sample/avatars" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/textViewTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textFontWeight="@integer/material_motion_duration_medium_1"
+                tools:text="@tools:sample/lorem[3]" />
+
+            <TextView
+                android:id="@+id/textViewBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textFontWeight="@integer/material_motion_duration_medium_1"
+                tools:text="@tools:sample/lorem[4]" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider" />
+
+        <ImageButton
+
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            app:srcCompat="@android:drawable/ic_input_add" />
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

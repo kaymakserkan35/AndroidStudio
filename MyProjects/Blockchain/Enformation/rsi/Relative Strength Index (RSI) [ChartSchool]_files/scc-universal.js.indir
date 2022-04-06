@@ -1,0 +1,1170 @@
+/* robs 2016-07-19  Combines common2.js with autosuggest.js
+ * This script serves as a placeholder for minified scripts.  There are some important differences though to allow this script to be put at the top of the page in the scripts section.  Without these changes, there would be a JavaScript error that says AutoSuggest is not a function.
+ * common2.js portion is at the top, along with the SCC object. It's later used by autosuggest.js to plug into.
+ * Notice that the SCC.AutoSuggest plugin is wrapped in a document ready function so that it gets executed after the page loads.
+*/
+
+var currentSccDomain = window.location.hostname;
+var jsonDomain = '//' + currentSccDomain;
+if (currentSccDomain.indexOf('stockcharts') !== 0) {
+    jsonDomain = '//stockcharts.com';
+}
+
+
+// Start common2.js
+var SCC = {
+    keyboard: {
+        UP: 38,
+        DOWN: 40,
+        DEL: 46,
+        TAB: 9,
+        RETURN: 13,
+        ESC: 27,
+        COMMA: 188,
+        PAGEUP: 33,
+        PAGEDOWN: 34,
+        BACKSPACE: 8,
+        CTRL: 224,
+        SPACE: 32,
+        LEFTARROW: 37,
+        UPARROW: 38,
+        RIGHTARROW: 39,
+        DOWNARROW: 40
+    },
+
+    util: {
+        getTopZIndex: function (selector) {
+            var $container = $(selector);
+            var level = 0;
+            $container.children().each(function () {
+                var zDepth = parseInt($(this).css('z-index'));
+                if (zDepth >= level) {
+                    level = zDepth;
+                }
+            });
+            return level;
+        }
+    },
+
+    cookie: {
+        // Max cookie length is 4,096 characters (4 KB)
+        // Maximum number of cookies per domain is 20 (many browsers allow more)
+        write: function (name, value, maxAge, path) {
+            if (maxAge) {
+                // persistent cookie (maxAge is days)
+                var now = new Date();
+                var expires = new Date(now.getTime() + maxAge * 24 * 60 * 60 * 1000);
+
+                var appendedPath = '';
+                if (path) { // use '/' for entire site
+                    appendedPath = '; path=' + path;
+                }
+
+                document.cookie = name + '=' + encodeURIComponent(value) + "; expires=" + expires.toGMTString() + appendedPath + '; domain=.' + currentSccDomain;
+            } else {
+                // session cookie
+                document.cookie = name + '=' + encodeURIComponent(value) + '; domain=.' + currentSccDomain;
+            }
+        },
+        read: function (name) {
+            var value = document.cookie.match('(?:^|;)\\s*' + name.replace(/([-.*+?^${}()|[\]\/\\])/g, "\\$1") + '=([^;]*)');
+            return (value) ? decodeURIComponent(value[1]) : null;
+        },
+        dispose: function (name) {
+            document.cookie = name + "=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=." + currentSccDomain;
+        }
+    }
+
+};
+
+function chartSearch(prefix) {
+    var field = document.getElementById(prefix + "-input"); // the input text field
+    var opts = document.getElementById(prefix + "-type"); // the dropdown hidden value
+
+    if (!field || !opts || !field.value || /^\s*$/.test(field.value)) {
+        return false;
+    }
+    if (field.value.indexOf('&') !== -1) {
+        field.value = field.value.replace('&', '%26');
+    }
+
+    var urls = {
+        sharpChart: "/h-sc/ui?s=",
+        acp: "/acp/?s=",
+        pnf: "/freecharts/pnf.php?c=",
+        candleGlance: "/freecharts/candleglance.html?",
+        perf: "/freecharts/perf.html?",
+        rrg: "/freecharts/rrg/?b=$SPX&p=w&y=1&t=10&f=tail,d&s=",
+        gallery: "/freecharts/gallery.html?",
+        seasonality: "/freecharts/seasonality.php?symbol=",
+        symSum: "/freecharts/symbolsummary.html?sym=",
+        symSearch: "/search/?section=symbol&q=",
+        search: "/search?q="
+    };
+
+    var charttype = opts.value;
+
+    var url = urls[charttype];
+    if (url) {
+        if (charttype === 'sharpChart' && field.value.indexOf(",") !== -1) {
+            url = url.replace("h-sc", "h-perf"); // redirect to the perf workbench when we have multiple symbols
+        }
+        url += field.value;
+
+        if (charttype === 'pnf') {
+            url += ",P";
+        }
+
+        url = jsonDomain + url;
+        if (typeof self !== "undefined" && typeof top !== "undefined" && self != top) {
+            parent.location = url;
+        } else {
+            window.location = url;
+        }
+    }
+
+    return false;
+}
+
+function addStyleSheetRules(rulestr) {
+    var styleEl = document.createElement('style'),
+        styleSheet;
+    document.head.appendChild(styleEl);
+    styleSheet = styleEl.sheet;
+    styleSheet.insertRule(rulestr, styleSheet.cssRules.length);
+}
+
+/*! loadJS copied from https://github.com/filamentgroup/loadJS
+ * loadJS: load a JS file asynchronously. [c]2014 @scottjehl, Filament Group, Inc. (Based on http://goo.gl/REQGQ by Paul Irish). Licensed MIT
+ */
+(function (w) {
+    var loadJS = function (src, cb, ordered) {
+        "use strict";
+        var tmp;
+        var ref = w.document.getElementsByTagName("script")[0];
+        var script = w.document.createElement("script");
+
+        if (typeof (cb) === 'boolean') {
+            tmp = ordered;
+            ordered = cb;
+            cb = tmp;
+        }
+
+        script.src = src;
+        script.async = !ordered;
+        ref.parentNode.insertBefore(script, ref);
+
+        if (cb && typeof (cb) === "function") {
+            script.onload = cb;
+        }
+        return script;
+    };
+    // commonjs
+    if (typeof module !== "undefined") {
+        module.exports = loadJS;
+    }
+    else {
+        w.loadJS = loadJS;
+    }
+}(typeof global !== "undefined" ? global : this));
+
+
+var miLoginCookie = SCC.cookie.read('mil');
+var miJsonStr;
+
+if (miLoginCookie && isLoggedIn()) {
+    console.log('found mil and isLoggedIn');
+    miJsonStr = atob(miLoginCookie);
+    var miJson = JSON.parse(miJsonStr);
+    $(document).ready(function () {
+        afterLogin(miJson.name, miJson);
+    });
+} else {
+    if (miLoginCookie) {
+        console.log('not isLoggedIn; dispose mil; do j-mi getloginstatus');
+        SCC.cookie.dispose('mil');
+    }
+
+    $.ajax(jsonDomain + "/j-mi/mi?cmd=getloginstatus&v=su1", {
+        type: "GET",
+        dataType: "json",
+        cache: false,
+        withCredentials: true
+    })
+        .done(function (json) {
+            if (json) {
+                if (json.isLoggedIn) {
+                    var name = "";
+                    if (json.firstName) {
+                        name = json.firstName;
+                    } else if (json.userId) {
+                        name = json.userId;
+                    }
+
+                    // save to mil cookie
+                    json.name = name;
+                    miJsonStr = JSON.stringify(json);
+                    SCC.cookie.write('mil', btoa(miJsonStr), 1 / (24 * 12), '/');
+
+                    $(document).ready(function () {
+                        afterLogin(name, json);
+                        afterLoginWelcomeUser(name, json);
+                    });
+                }
+                else {
+                    console.log('j-mi getloginstatus failed, json not isLoggedIn');
+                    $(document).ready(function () {
+                        afterLoginCheckFailed();
+                        afterLoginFailedShowFreeUserModal();
+                    });
+                }
+            }
+            else {
+                console.log('j-mi getloginstatus failed, no json');
+                isloggedin = false;
+
+                $(document).ready(function () {
+                    afterLoginCheckFailed();
+                    afterLoginFailedShowFreeUserModal();
+                });
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.log('j-mi getloginstatus jquery .fail(), ' + textStatus + ': ' + errorThrown);
+            isloggedin = false;
+
+            $(document).ready(function () {
+                afterLoginCheckFailed();
+                afterLoginFailedShowFreeUserModal();
+            });
+        });
+}
+
+$(document).ready(function () {
+    if ($('.label-tv-live').length > 0) {
+        var cachebustinterval = Math.floor(Date.now() / 180000); // refresh every 3 minutes
+        $.getJSON("//" + currentSccDomain + "/tv/json/tvlive.json?ts=" + cachebustinterval, function (json) {
+            if (json && json.is_live) {
+                $('.label-tv-live').show();
+            }
+        });
+    }
+});
+
+// Start login check functions -------------------------------------------
+function isLoggedIn() { // using cookie
+    // note to self: this session based cookie check is shallow; see if member has logged in before; do not rely heavily upon it
+    if (loggedInChecked)
+        return isloggedin;
+    loggedInChecked = true;
+    isloggedin = (/SCCLogin2=[\w]+/.test(document.cookie) || /SCC[a-z]+ID=[\w]+/i.test(document.cookie));
+
+    return isloggedin;
+}
+var isloggedin = false, loggedInChecked = false;
+
+var afterLogin = function (name, json) { // from members servlet call
+    afterLoginWelcomeUser(name, json);
+
+    if (typeof window.afterSccLoginFN === 'function') {
+        window.afterSccLoginFN();
+    }
+};
+var afterLoginCheckFailed = function () {
+    $('.scc-upgrade-tip').show();
+};
+var afterLoginWelcomeUser = function (name, json) {
+    $('#nav-userID').text(name);
+    $('#nav-loginBtn').hide(); // hide login button
+    $('#nav-signUpBtn').hide(); // hide sign up button
+    $('#nav-userProfile').show(); // show user profile
+};
+
+var afterLoginFailedShowFreeUserModal = function () {
+    // only show in specific paths
+    var sccPath = window.location.pathname;
+    if ((sccPath.indexOf('/freecharts') === -1) && (sccPath.indexOf('/h-sc/ui') === -1)) { //  && (sccPath.indexOf('/sales') === -1)
+        return;
+    }
+
+    // display modal after 2.5 seconds
+    var modalTimerFromPageLoad = setInterval(function () {
+        var shownModal = false, visited5FreePages = false, pageIncrement = 0, cookieName = 'freeunlock', cookieExpiration = 1;
+        var cookieVal = SCC.cookie.read(cookieName);
+
+        if (cookieVal) {
+            var cookieValTokens = cookieVal.split('|');
+            shownModal = cookieValTokens[0] === 'true';
+            pageIncrement = parseInt(cookieValTokens[1]);
+            visited5FreePages = pageIncrement >= 5;
+        }
+
+        if (!shownModal) {
+            if (visited5FreePages) {
+                var modalHtml = '<div id="modal_sccTrial" class="modal fade" tabindex="-1" role="dialog">' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times-circle"></i></span></button>' +
+                    '<div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-body">' +
+                    '<img src="//d.stockcharts.com/img/chartwatchers/stockcharts-signup.jpg" alt="StockCharts Features" class="header-image" />' +
+                    '<div class="textwrap"><h4>Ready to get more out of StockCharts?</h4><h2>Unlock all of our most powerful tools and features</h2>' +
+                    '<p>Create bigger, better, more advanced charts and save them to your account. Organize the charts you\'re watching to streamline your portfolio management. Run custom scans to find new trading and investment opportunities, and set automatic alerts with your own unique technical&nbsp;criteria.</p>' +
+                    '<p class="hide-xs"><b>Start your free 1-month trial in less&nbsp;than&nbsp;60&nbsp;seconds!</b></p><div class="btn-row">' +
+                    '<a href="/checkout/freetrial/" target="_blank" class="btn btn-lightgreen btn-md btn-rounded btn-margin-0"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;Free&nbsp;1-Month&nbsp;Trial</a>' +
+                    '<a href="/" class="btn-row-link">Learn&nbsp;More</a><a data-dismiss="modal" class="btn-row-close">No&nbsp;Thanks</a>' +
+                    '</div></div></div></div></div></div>';
+                $('body').append(modalHtml);
+                $('#modal_sccTrial').modal('show');
+
+                SCC.cookie.write(cookieName, 'true|' + pageIncrement, cookieExpiration, '/');
+            }
+            else {
+                pageIncrement += 1;
+                SCC.cookie.write(cookieName, 'false|' + pageIncrement, cookieExpiration, '/');
+            }
+        }
+
+        clearInterval(modalTimerFromPageLoad);
+    }, 2500);
+};
+// End login check functions -------------------------------------------
+
+
+// Start ad functions -------------------------------------------
+// old deprecated Investing Channel ads
+function loadPartnerAd(url, appendAdFreeMsg, specifier) {
+    console.log('called deprecated loadPartnerAd()');
+}
+// End ad functions -------------------------------------------
+
+// Start local storage preferences functions ---------------------------
+
+var CHARTSEARCH_PREFERENCE_KEY = "scc-nav-chartSearch-menu-currentFavorite";
+var DEFAULT_CHARTSEARCH_PREFERENCE = "sharpChart";
+
+document.addEventListener("DOMContentLoaded", function () {
+    setupChartSearchPreference();
+});
+
+function setupChartSearchPreference() {
+    ensureValidChartSearchPreferenceValue();
+    setupStarElementOnClickHandlers();
+    applyCurrentChartSearchPreference();
+}
+
+// Because preference comes from a data-val of DOM element, it must not start with a digit
+// If we try to query a selector with a data-val with a leading digit it would cause a DOM exception
+// So, if a preference value with a leading digit was saved, then just clear it to prevent a DOM exception
+function ensureValidChartSearchPreferenceValue() {
+    var preference = localStorage.getItem(CHARTSEARCH_PREFERENCE_KEY);
+    var preferenceBeginsWithNumber = /^\d/.test(preference);
+    if (preferenceBeginsWithNumber) {
+        console.error("Invalid chart search preference value detected: ", preference);
+        localStorage.removeItem(CHARTSEARCH_PREFERENCE_KEY);
+    }
+}
+
+function setupStarElementOnClickHandlers() {
+    var starElements = document.querySelectorAll("#nav-chartSearch-menu .item-star");
+    for (const starElement of starElements) {
+        starElement.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var clickedElementParentDataValue = this.parentElement.getAttribute('data-val');
+            localStorage.setItem(CHARTSEARCH_PREFERENCE_KEY, clickedElementParentDataValue);
+
+            for (const el of starElements) {
+                el.classList.remove("starred");
+            }
+            this.classList.add("starred");
+        });
+    }
+}
+
+function applyCurrentChartSearchPreference() {
+    var preference = localStorage.getItem(CHARTSEARCH_PREFERENCE_KEY);
+    var preferredChartSearchOption;
+    if (preference) {
+        preferredChartSearchOption = document.querySelector('#nav-chartSearch-menu a[data-val=' + preference + ']');
+    }
+
+    if (!preferredChartSearchOption) {
+        console.info("Chart search preference value not found, trying to set to default");
+        preferredChartSearchOption = document.querySelector('#nav-chartSearch-menu a[data-val=' + DEFAULT_CHARTSEARCH_PREFERENCE + ']');
+
+        if (preferredChartSearchOption) {
+            localStorage.setItem(CHARTSEARCH_PREFERENCE_KEY, DEFAULT_CHARTSEARCH_PREFERENCE);
+        } else {
+            var firstChartSearchOption = document.querySelector("#nav-chartSearch-menu a");
+            if (!firstChartSearchOption) {
+                console.error("Unable to set default chartSearch preference because no 'a' tag element was found in the chartSearch menu");
+                return;
+            }
+
+            var firstChartSearchOptionDataVal = firstChartSearchOption.getAttribute('data-val');
+            if (!firstChartSearchOptionDataVal) {
+                console.error("Unable to set default chartSearch preference because the first chartSearch option element had no data-val attribute");
+                return;
+            }
+
+            localStorage.setItem(CHARTSEARCH_PREFERENCE_KEY, firstChartSearchOption.getAttribute('data-val'));
+            preferredChartSearchOption = firstChartSearchOption;
+        }
+    }
+
+    // Apply star to preferred ChartSearch option
+    var preferredChartSearchOptionStar = preferredChartSearchOption.querySelector(".item-star");
+
+    if (preferredChartSearchOptionStar) {
+        preferredChartSearchOptionStar.classList.add("starred");
+    }
+
+    // Set ChartSearch type to match preferred ChartSearch option
+    var preferredChartSearchOptionValue = preferredChartSearchOption.getAttribute("data-val");
+    var preferredChartSearchOptionLabelElement = preferredChartSearchOption.querySelector(".item-label");
+    var preferredChartSearchOptionLabel;
+    if (preferredChartSearchOptionLabelElement) {
+        preferredChartSearchOptionLabel = preferredChartSearchOptionLabelElement.textContent;
+    }
+
+    if (preferredChartSearchOptionValue && preferredChartSearchOptionLabel) {
+        var chartSearchButton = document.getElementById("nav-chartSearch-btn");
+        if (chartSearchButton) {
+            chartSearchButton.firstChild.textContent = preferredChartSearchOptionLabel + " ";
+        } else {
+            console.error("No chart search button found");
+        }
+
+        var navChartSearchType = document.getElementById("nav-chartSearch-type");
+        if (navChartSearchType) {
+            navChartSearchType.value = preferredChartSearchOptionValue;
+        } else {
+            console.error("Chart search type input not found");
+        }
+    }
+}
+
+// End local storage preferences functions -----------------------------------
+
+// Start url and cookie functions -------------------------------------------
+function getUrlVars() {
+    var vars = {};
+    var queryString = window.location.href.slice(window.location.href.indexOf('?') + 1);
+    var hashIdx = queryString.indexOf('#');
+    if (hashIdx > -1) {
+        queryString = queryString.substr(0, hashIdx);
+    }
+
+    var dict = queryString.split('&');
+    for (const el of dict) {
+        var pair = el.split('=');
+        vars[pair[0]] = pair[1];
+    }
+    return vars;
+}
+
+function updateURL(url, title) { // change URL without reloading
+    if (history.pushState) {
+        var stateObj = { 'title': title, 'url': url };
+        window.history.pushState(stateObj, stateObj.title, stateObj.url);
+    }
+}
+
+function ensureMemberProtocol() { }
+
+function getCookie(name) { // from http://stackoverflow.com/questions/10730362/get-cookie-by-name
+    return SCC.cookie.read(name);
+}
+function setCookie(name, value, expireDays) {
+    SCC.cookie.write(name, value, expireDays, '/');
+}
+
+// End url and cookie functions -------------------------------------------
+
+
+// Start highlight search terms (if st=<term> is present in the url) ------
+function getQueryParam(name) {
+    var queryVars = getUrlVars();
+    if (queryVars[name])
+        return decodeURIComponent(queryVars[name]);
+}
+
+$.fn.highlight = function (pattern) {
+    // case insensitive search (single characters are only matched if they are words by themselves)
+    var re = (pattern.length > 1) ? new RegExp(pattern, "i") : new RegExp("\\b" + pattern + "\\b", "i");
+
+    function doHighlight(node) {
+        var skip = 0;
+        if (node.nodeType === 3) {
+            var pos = node.data.search(re);
+            if (pos >= 0) {
+                var spanNode = document.createElement('span');
+                var middleBit = node.splitText(pos);
+                middleBit.splitText(pattern.length);
+                var middleClone = middleBit.cloneNode(true);
+                spanNode.appendChild(middleClone);
+                middleBit.parentNode.replaceChild(spanNode, middleBit);
+                $(spanNode).css({ 'background-color': 'yellow', 'color': 'black' });
+                skip = 1;
+            }
+        } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) {
+            for (var i = 0; i < node.childNodes.length; ++i) {
+                i += doHighlight(node.childNodes[i]);
+            }
+        }
+        return skip;
+    }
+
+    return this.each(function () {
+        if (pattern) {
+            doHighlight(this);
+        }
+    });
+};
+
+var searchQueryParam = getQueryParam("st");
+if (document.location.pathname.indexOf("/h-sc/ui") === 0) {
+    searchQueryParam = "";    // Don't highlight things on SC workbench - CA
+}
+
+if (searchQueryParam) {
+    $(document).ready(function () {
+        var searchTerms = searchQueryParam.split("+");
+        for (const searchTerm of searchTerms) {
+            $(document.body).highlight(searchTerm);
+        }
+    });
+}
+// End highlight search terms   -------------------------------------------
+
+
+// GOOGLE ANALYTICS
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); }
+gtag('js', new Date());
+gtag('config', 'UA-88248853-1');
+gtag('config', 'AW-1072529189');
+var importGoogleAnalyticsScript = document.createElement('script');
+importGoogleAnalyticsScript.src = 'https://www.googletagmanager.com/gtag/js?id=UA-88248853-1';
+document.head.appendChild(importGoogleAnalyticsScript);
+
+
+// NOTIFICATION BANNERS
+function RetrieveNotifications(pageLocation) {
+    var cc = '';
+    var sl2 = SCC.cookie.read('SCCLogin2');
+    if (sl2) {
+        var sl2Tokens = sl2.split('.');
+        cc = sl2Tokens[1];
+    }
+
+    var notificationBaseUrl = jsonDomain + '/j-notify/notify?';
+    var notificationsGetUrl = notificationBaseUrl + 'cmd=getuserscurrentnotifications&cc=' + cc;
+    if (pageLocation) {
+        notificationsGetUrl = notificationsGetUrl + '&location=' + pageLocation;
+    }
+
+    $.ajax({
+        dataType: "json",
+        url: notificationsGetUrl,
+        xhrFields: { withCredentials: true },
+        success: ajaxNotificationSuccess
+    });
+
+    function ajaxNotificationSuccess(notificationsWrapper) {
+        if (!notificationsWrapper['notifications']) {
+            return;
+        }
+
+        $(document).ready(function () {
+            var notifications = notificationsWrapper['notifications'].sort(function (a, b) { return b.severity - a.severity; }); // sort by severity descending order
+            notificationLi = '';
+            var now = new Date();
+            var nowTime = now.getTime() / 1000; // milliseconds to seconds
+
+            for (var i in notifications) {
+                var notification = notifications[i];
+                var id = notification['ID'];
+                if (getCookie('notification-clicked-' + id)) {
+                    continue;
+                }
+                if (!(nowTime > notification["startDate"] && nowTime < notification["endDate"])) {
+                    continue;
+                }
+
+                var dismissible = (notification["target"] == cc) ? 'dismissible' : '';
+
+                notificationLi = notificationLi + '<li class="notification-color-' + notification["severity"] + '" data-notification-id="' + id +
+                    '" data-expiration-timestamp="' + notification["endDate"] + '" data-dismissible="' + dismissible + '">' +
+                    '<span class="notification-message">' + notification["message"] + '</span>' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-times"></i></button></li>';
+            }
+
+            if (notificationLi) {
+                $('#notification-banners').html(notificationLi);
+                var notificationHeight = $('#notification-banners').outerHeight();
+                $('#notification-banners').css({ 'height': 0, 'display': 'block' });
+                $('#notification-banners').animate({ 'height': notificationHeight }, 300, function () { $('#notification-banners').css({ 'height': 'auto' }); });
+            }
+        });
+    }
+
+    $(document).on('click', '#notification-banners li .close', function () {
+        var notificationItem = $(this).parent();
+        $(notificationItem).animate({ height: 0 }, 200, function () { $(notificationItem).remove(); });
+        var id = $(notificationItem).data('notification-id');
+        var dismissible = $(notificationItem).data('dismissible');
+
+        if (dismissible) { // user notifications get dismissed on server, group notifications get dismissed in the browser
+            $.getJSON(notificationBaseUrl + "cmd=dismissnotification&cc=" + cc + "&id=" + id);
+        }
+        else {
+            // add cookie to mark this notification as read
+            var now = new Date();
+            var nowTime = now.getTime() / 1000; // milliseconds to seconds
+            var secondsPerDay = 86400;
+            var expireDays = 30 + (parseInt($(notificationItem).data('expiration-timestamp')) - nowTime) / secondsPerDay; // 30 days + expiration days from now
+            setCookie('notification-clicked-' + id, 1, expireDays);
+        }
+    });
+}
+
+// end commons.js with modifications
+
+
+
+// start autosuggest.js
+$(document).ready(function () {
+    SCC.AutoSuggest = function (selector, args) {
+        this.init(selector, args);
+    };
+
+    SCC.AutoSuggest.prototype = {
+        init: function (selector, args) {
+            // the purpose of this plugin is to automatically fill an input field
+            // the selector should point to the pertinent input field on the page
+            // it can also point to a form element, if so, we will use the first input field in the form
+
+            this.$searchbox = $(selector);
+
+            if (this.$searchbox.is("form")) {
+                this.$searchbox = this.$searchbox.find("input[type=text]").first();
+            }
+
+            if (!this.$searchbox.is("input")) {
+                return;
+            }
+
+            this.opts = $.extend({
+                inputText: "Enter Symbol or Name",
+                maxResults: 10,
+                exchanges: "any"
+            }, args || {});
+
+            this.searchServer = jsonDomain + "/api/v1/search";
+            this.timerId = 0;
+            this.isReturnKeyDown = false;
+            this.isExpandDown = true;
+            this.isExpandRight = true;
+            this.cache = {}; // a cache for search results
+            this.lastTyped = ""; // the most recently typed characters
+
+            var that = this;
+
+            // initialize the search box
+            this.$searchbox.attr({
+                autocomplete: "off"
+            }).css({
+                fontStyle: this.opts.inputText.length > 0 ? "italic" : "normal",
+                color: this.opts.inputText.length > 0 ? "#aaaaaa" : "#000000"
+            }).focus(function () {
+                // erase default text when search box gains focus
+                if ($(this).val() == that.opts.inputText) {
+                    $(this).val("");
+                }
+                $(this).css({
+                    fontStyle: "normal",
+                    color: "#000000"
+                });
+            }).blur(function () {
+                // hide the suggestion box when the search box loses focus, we must delay this
+                // slightly, because it could conflict with a click event in the suggestion box
+                setTimeout(function () {
+                    that.destroySuggestions();
+                }, 500);
+
+            }).keydown(function (event) {
+                // submit when return key is pressed
+                if (event.keyCode === SCC.keyboard.RETURN && !that.isReturnKeyDown) {
+                    that.isReturnKeyDown = true;
+                    that.formSubmit(that);
+                }
+            }).keyup(function (event) {
+                var searchQuery = $.trim($(this).val().toLowerCase());
+
+                var lastChar = searchQuery.charAt(searchQuery.length - 1);
+                var isDownArrow = (event.keyCode === SCC.keyboard.DOWN);
+                var isUpArrow = (event.keyCode === SCC.keyboard.UP);
+                var isReturn = (event.keyCode === SCC.keyboard.RETURN);
+                var isComma = (event.keyCode === SCC.keyboard.COMMA) || (lastChar === ',');
+                var isSpace = (event.keyCode === SCC.keyboard.SPACE) || (lastChar === ' ');
+                var isColon = (lastChar === ':');
+
+                if (isDownArrow) {
+                    that.next();
+                } else if (isUpArrow) {
+                    that.prev();
+                } else if (isReturn) {
+                    that.isReturnKeyDown = false;
+                } else if (isComma || isSpace || isColon) {
+                    // don't refresh the suggestions
+                    that.lastTyped = $(this).val();
+                } else if (searchQuery.length > 0) {
+                    that.lastTyped = $(this).val();
+                    // pause slightly before we try to retrieve suggestions, this is to prevent fast typists
+                    // from retrieving intermediate suggestions that will never be seen
+                    clearTimeout(that.timerId);
+                    that.timerId = setTimeout(function () {
+                        that.refreshSuggestions();
+                    }, 250);
+                } else {
+                    // empty search query
+                    that.lastTyped = "";
+                    that.destroySuggestions();
+                }
+            }).val(this.opts.inputText);
+
+            // the suggestion box is initially null, we will create it when needed and remove it from the document when hidden
+            this.$suggestionbox = null;
+
+            // reposition the suggestion box when the browser is resized, to keep it aligned with search box
+            $(window).resize(function () {
+                that.positionSuggestions();
+            });
+        },
+
+        setExchanges: function (exchanges) {
+            this.opts.exchanges = exchanges;
+            this.cache = {};
+        },
+
+        refreshPage: function (url) {
+            var currentDomain = "//" + currentSccDomain;
+            url = currentDomain + url;
+            var inFrameset = typeof self !== "undefined" && typeof top !== "undefined" && self != top;
+            if (inFrameset) {
+                parent.location = url;
+            } else {
+                window.location = url;
+            }
+        },
+
+        refreshSuggestions: function () {
+            var that = this;
+            var searchQuery = $.trim(this.$searchbox.val().toLowerCase());
+            /* Double check that the search query is not empty because 
+            * between when the timeout was started and when it called this method 
+            * the user could have cleared the search box
+            */
+            if (searchQuery === 'enter symbol or name' || searchQuery.length === 0) {
+                that.destroySuggestions();
+                return;
+            }
+
+            // if we have a comma delimited list or a ratio symbol, just use
+            // the characters after the final comma (or colon)
+            var iComma = searchQuery.lastIndexOf(",");
+            var iColon = searchQuery.lastIndexOf(":");
+            var hasComma = iComma !== -1 && iComma > iColon;
+            var hasColon = iColon !== -1 && iColon > iComma;
+            if (hasComma) {
+                searchQuery = $.trim(searchQuery.substring(iComma + 1));
+            } else if (hasColon) {
+                searchQuery = $.trim(searchQuery.substring(iColon + 1));
+            }
+
+            if (this.cache[searchQuery]) {
+                // we've found the results in the cache
+                const cachedSearchResultsJson = this.cache[searchQuery];
+                this.showSuggestions(searchQuery, cachedSearchResultsJson);
+                return;
+            }
+
+            // retrieve the suggested results as a json object
+            $.getJSON(this.searchServer, {
+                section: "symbols",
+                q: searchQuery,
+                perPage: this.opts.maxResults
+            }, function (searchResultsJson) {
+                if (
+                    typeof searchResultsJson !== "object" ||
+                    !searchResultsJson.data ||
+                    !searchResultsJson.data.length
+                ) {
+                    that.destroySuggestions();
+                    return;
+                }
+
+                that.cache[searchQuery] = searchResultsJson;
+                that.showSuggestions(searchQuery, searchResultsJson);
+            });
+        },
+
+        showSuggestions: function (searchQuery, json) {
+            var that = this;
+            if (searchQuery === 'enter symbol or name') {
+                this.destroySuggestions();
+                return;
+            }
+
+            // convert the json to an html table of suggestions
+            var companies = json.data;
+            var markup = "<table class='suggestions' cellspacing='0' cellpadding='2'>";
+            if (companies && companies.length > 0) {
+                // convert the json object to a simple table containing symbol, name, and exchange
+                if (companies.length === this.opts.maxResults && !this.isExpandDown) {
+                    markup += "<tr class='suggestion'><td class='more' colspan='3'>More Results For \"" + searchQuery.toUpperCase() + "\" ...</td></tr>";
+                }
+
+                for (var i = 0; i < companies.length; i++) {
+                    var index = (this.isExpandDown) ? i : companies.length - 1 - i;
+                    var company = companies[index];
+                    var symbol = company.symbol;
+                    var name = company.name;
+                    var exchange = company.exchange;
+
+                    markup += "<tr class='suggestion'>";
+                    markup += "<td class='symbol'>" + this.hilite(symbol, searchQuery) + "</td>";
+                    markup += "<td class='company'>" + this.hilite(name, searchQuery) + "</td>";
+                    markup += "<td class='exchange' align='right'>" + exchange + "</td>";
+                    markup += "</tr>";
+                }
+
+                if (companies.length === this.opts.maxResults && this.isExpandDown) {
+                    markup += "<tr class='suggestion'><td class='more' colspan='3'>More Results For \"" + searchQuery.toUpperCase() + "\" ...</td></tr>";
+                }
+
+            } else {
+                this.destroySuggestions();
+                return;
+            }
+            markup += "</table>";
+
+            // fill the suggestions div with this table
+            if (this.$suggestionbox == null) {
+                // if the suggestion box doesn't exist, create it on-the-fly
+                this.initSuggestions(markup);
+            } else {
+                this.$suggestionbox.html(markup);
+                // nullify any width previously given to the suggestion box (let the table have as much width as it needs)
+                this.$suggestionbox.css('width', '');
+            }
+
+            $('.suggestion', this.$suggestionbox).hover(function () {
+                $(this).addClass('hovered');
+            }, function () {
+                $(this).removeClass('hovered');
+            }).click(function (event) {
+                $(this).addClass("selected").removeClass("hovered").siblings().removeClass("selected");
+                that.fillSearchBox();
+                that.formSubmit(that);
+            });
+
+            $('.suggestion:even', this.$suggestionbox).addClass('even');
+            $('.suggestion:odd', this.$suggestionbox).addClass('odd');
+
+            // if the suggestion box turns out to be smaller than the search box, make their widths equal
+            var wSuggesions = this.$suggestionbox.width();
+            var wInput = this.$searchbox.outerWidth(true);
+
+            if (wSuggesions < wInput) {
+                this.$suggestionbox.width(wInput);
+                $('table', this.$suggestionbox).width(wInput);
+            }
+
+            this.hideApplet();
+        },
+
+        initSuggestions: function (markup) {
+            // add the suggestion box to the document
+            this.$suggestionbox = $("<div>").addClass('autosuggest').html(markup).css({
+                position: "absolute",
+                zIndex: SCC.util.getTopZIndex(document.body) + 1
+            }).appendTo(document.body);
+            this.positionSuggestions();
+        },
+
+        positionSuggestions: function () {
+            if (this.$suggestionbox == null) {
+                return;
+            }
+            // position relative to window
+            var xInput = this.$searchbox.offset().left;
+            var yInput = this.$searchbox.offset().top;
+            var hInput = this.$searchbox.outerHeight(true);
+            var wInput = this.$searchbox.outerWidth(true);
+            // window dimensions
+            var hWindow = $(window).height();
+            var wWindow = $(window).width();
+            // dimensions for suggestions
+            var hSuggestions = this.$suggestionbox.outerHeight(true);
+            var wSuggestions = this.$suggestionbox.outerWidth(true);
+
+            // can we drop down
+            this.isExpandDown = (hWindow - hInput - yInput) > hSuggestions || yInput < hSuggestions;
+            // can we expand right
+            this.isExpandRight = (wWindow - wInput - xInput) > wSuggestions || xInput < wSuggestions;
+
+            if (this.isExpandDown) {
+                this.$suggestionbox.css({
+                    top: yInput + hInput,
+                    bottom: ""
+                });
+            } else {
+                this.$suggestionbox.css({
+                    top: "",
+                    bottom: hWindow - yInput
+                });
+            }
+
+            if (this.isExpandRight) {
+                this.$suggestionbox.css({
+                    left: xInput,
+                    right: ""
+                });
+            } else {
+                this.$suggestionbox.css({
+                    right: wWindow - wInput - xInput,
+                    left: ""
+                });
+            }
+        },
+
+        destroySuggestions: function () {
+            if (this.$suggestionbox != null) {
+                this.$suggestionbox.remove();
+                this.$suggestionbox = null;
+                this.showApplet();
+            }
+        },
+
+        hilite: function (fullstring, substring) {
+            var substringTokens = substring.split(/\s+/);
+            for (const substringToken of substringTokens) {
+                var index = fullstring.toLowerCase().indexOf(substringToken.toLowerCase());
+                if (index !== -1) {
+                    fullstring = fullstring.substring(0, index) + "<b>" + fullstring.substring(index, index + substringToken.length) + "</b>" + fullstring.substring(index + substringToken.length);
+                }
+            }
+            return fullstring;
+        },
+
+        isOverlap: function ($elem1, $elem2) {
+            // determine if two elements overlap eachother
+            // x and y values are relative to window
+            var x1 = $elem1.offset().left;
+            var y1 = $elem1.offset().top;
+            var w1 = $elem1.outerWidth(true);
+            var h1 = $elem1.outerHeight(true);
+            var x2 = $elem2.offset().left;
+            var y2 = $elem2.offset().top;
+            var w2 = $elem2.outerWidth(true);
+            var h2 = $elem2.outerHeight(true);
+            var intersectH = x1 + w1 > x2 && x1 < x2 + w2;
+            var intersectV = y1 + h1 > y2 && y1 < y2 + h2;
+            return intersectH && intersectV;
+        },
+
+        hideApplet: function () {
+            var that = this;
+            // if their are applets on the page, we must temporarily move them
+            // offscreen, otherwise they will obscure the suggestion box
+            var $applets = $('object, applet, #testdiv');
+            if ($applets.size() === 0) {
+                return;
+            }
+            $applets.each(function () {
+                var $applet = $(this);
+                var $suggestions = that.$suggestionbox;
+                var isOverlap = that.isOverlap($suggestions, $applet);
+                if (isOverlap) {
+                    $applet.css({
+                        position: "relative",
+                        left: -999
+                    });
+                }
+            });
+        },
+
+        showApplet: function () {
+            // if we have moved applets offscreen, return them to their original position
+            var $applets = $('object, applet, #testdiv');
+            if ($applets.size() === 0) {
+                return;
+            }
+            $applets.each(function () {
+                var $applet = $(this);
+                if ($applet.position().left == -999) {
+                    $applet.css({
+                        position: "",
+                        left: 0
+                    });
+                }
+            });
+        },
+
+        next: function () {
+            var $selected = $('.suggestion.selected', this.$suggestionbox);
+            if ($selected.size() > 0) {
+                $selected.removeClass('selected');
+                $selected.next().addClass('selected');
+            } else {
+                $('.suggestion:first', this.$suggestionbox).addClass('selected');
+            }
+            this.fillSearchBox();
+        },
+
+        prev: function () {
+            var $selected = $('.suggestion.selected', this.$suggestionbox);
+            if ($selected.size() > 0) {
+                $selected.removeClass('selected');
+                $selected.prev().addClass('selected');
+            } else {
+                $('.suggestion:last', this.$suggestionbox).addClass('selected');
+            }
+            this.fillSearchBox();
+        },
+
+        formSubmit: function (that) {
+            var searchQuery = $.trim(that.$searchbox.val().toLowerCase());
+
+            if (searchQuery.length > 0) {
+                var isShowMore = $('.suggestion.selected', this.$suggestionbox).children().hasClass("more");
+                that.destroySuggestions();
+                if (isShowMore) {
+                    event.preventDefault();
+                    that.refreshPage("/search/?section=symbol&q=" + searchQuery);
+                } else {
+                    var $form = that.$searchbox.closest("form");
+                    if ($form.size() > 0) {
+                        var formElem = $form.get(0);
+                        if (typeof formElem.onsubmit == "function") {
+                            formElem.onsubmit();
+                        }
+                    }
+                }
+            }
+        },
+
+        fillSearchBox: function () {
+            // get the selected suggestion
+            var $selected = $('.suggestion.selected', this.$suggestionbox);
+            if ($selected.size() > 0) {
+                // extract the ticker symbol from the selected suggestion
+                var $symbol = $('.symbol', $selected);
+                if ($symbol.size() > 0) {
+                    var searchQuery = $.trim(this.$searchbox.val());
+                    var iComma = searchQuery.lastIndexOf(",");
+                    var iColon = searchQuery.lastIndexOf(":");
+                    var hasComma = iComma !== -1 && iComma > iColon;
+                    var hasColon = iColon !== -1 && iColon > iComma;
+                    var symbols;
+                    if (hasComma) {
+                        // if we are a comma delimited list, append the new symbol
+                        symbols = searchQuery.split(",");
+                        symbols.pop();
+                        symbols.push($symbol.text());
+                        this.$searchbox.val(symbols.join(","));
+                    } else if (hasColon) {
+                        // if we are a ratio symbol, append the new symbol
+                        symbols = searchQuery.split(":");
+                        symbols.pop();
+                        symbols.push($symbol.text());
+                        this.$searchbox.val(symbols.join(":"));
+                    } else {
+                        // otherwise just replace the search contents with the selected symbol
+                        this.$searchbox.val($symbol.text());
+                    }
+                } else {
+                    this.$searchbox.val(this.lastTyped);
+                }
+            } else {
+                this.$searchbox.val(this.lastTyped);
+            }
+        }
+    };
+
+    // jquery plugin
+    $.fn.autosuggest = function (args) {
+        // in this scope, "this" refers to the jQuery object (a wrapped set of elements)
+        return this.each(function () {
+            // now "this" refers to individual dom elements
+            new SCC.AutoSuggest(this, args);
+        });
+    };
+});
+// end autosuggest.js
+
+
+
+// navigation header script to run after autosuggest
+$(document).ready(function () {
+
+    // CHART SEARCH
+    var $navChartSearch = $('#nav-chartSearch');
+    if ($navChartSearch.length > 0) {
+        $navChartSearch.autosuggest({ inputText: '' }); // setting inputText removes the bold text (not really placeholder) that is one of the init options in autosuggest.js
+
+        $navChartSearch.find('#nav-chartSearch-menu li a').on('click', function (e) {
+            var chartType = $(this).data('val');
+            $navChartSearch.find('#nav-chartSearch-type').val(chartType);
+            // FILL DROPDOWN TOGGLE WITH SELECTED MENU ITEM
+            var selText = $(this).text();
+            $(this).parents('.input-group-btn').find('.dropdown-toggle').html(selText + ' <i class="fa fa-angle-down"></i>');
+            e.preventDefault();
+        });
+    }
+
+    // SITE SEARCH
+    var $navSiteSearchInput = $('#nav-siteSearch-input');
+    var $navSiteSearchIcon = $('#nav-siteSearch-icon');
+    $navSiteSearchInput.keyup(function () {
+        var inputVal = $(this).val();
+        inputVal = $.trim(inputVal).length;
+        if (inputVal !== 0) {
+            $navSiteSearchIcon.css('display', 'none');
+        } else {
+            $(this).val('');
+            $navSiteSearchIcon.css('display', 'block');
+        }
+    });
+
+    var searchBoxIsOpen = false;
+
+    var $navSiteSearch = $('#nav-siteSearch');
+    $navSiteSearchIcon.click(function () {
+        if (!searchBoxIsOpen) {
+            $navSiteSearch.addClass('nav-siteSearch-open');
+            $navSiteSearchInput.focus();
+            searchBoxIsOpen = true;
+        } else {
+            $navSiteSearch.removeClass('nav-siteSearch-open');
+            $navSiteSearchInput.focusout();
+            searchBoxIsOpen = false;
+        }
+    });
+
+    $navSiteSearchIcon.mouseup(function () {
+        return false;
+    });
+
+    $navSiteSearch.mouseup(function () {
+        return false;
+    });
+
+    $(document).mouseup(function () {
+        if (searchBoxIsOpen) {
+            $navSiteSearchIcon.css('display', 'block');
+            $navSiteSearchIcon.click();
+        }
+    });
+
+});
+// end navigation header script

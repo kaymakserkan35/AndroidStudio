@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">pickers</string>
+    <string name="news" > </string>
+    <string name="old" >old</string>
+    <string name="time_picker" >time_picker</string>
+    <string name="time_picker_spinner" >time_picker_spinner</string>
+    <string name="date_picker" >date_picker</string>
+    <string name="note_we_can_t_use_setondatechangedlistener_method_in_api_less_than_26" >note_we_can_t_use_setondatechangedlistener_method_in_api_less_than_26</string>
+    <string name="number_picker" >number_picker</string>
+    <string name="get_changed_date_using_button" >get_changed_date_using_button</string>
+</resources>

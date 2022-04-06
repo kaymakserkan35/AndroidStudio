@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:tag="container"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="25dp"
+    android:orientation="vertical"
+    tools:context=".ui.main.PlaceholderFragment">
+
+    <LinearLayout
+        android:id="@+id/row"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:tag="row">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="chipA"
+            android:text="chipA" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="chipB"
+            android:text="chipB" />
+
+    </LinearLayout>
+
+</LinearLayout>

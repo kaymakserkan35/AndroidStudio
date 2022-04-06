@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">dataBinding</string>
+    <string name="message"> Hola! </string>
+</resources>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/time_picker"
+            android:textSize="18sp"
+            android:textColor="@color/green"
+            android:textStyle="bold" />
+        <TimePicker
+            android:id="@+id/timepicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/time_picker_spinner"
+            android:textSize="18sp"
+            android:textColor="@color/green"
+            android:textStyle="bold" />
+        <TimePicker
+            android:id="@+id/timepickerspinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner"
+            tools:targetApi="lollipop" />
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/date_picker"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/green"/>
+        <DatePicker
+            android:id="@+id/datepicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/textapi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/purple_500"/>
+        <Button
+            android:id="@+id/readdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/get_changed_date_using_button"/>
+
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/number_picker"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/green"/>
+        <TextView
+            android:id="@+id/textchanges"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text=""
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/purple_500"
+            />
+        <NumberPicker
+            android:id="@+id/numberpicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+</ScrollView>

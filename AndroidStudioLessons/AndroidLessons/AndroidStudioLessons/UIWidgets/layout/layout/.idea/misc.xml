@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_constrait.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_constrait_b.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_frame.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_grid.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_grid2.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_linear_nested.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_lineer.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_relative.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_responsive_grid.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_table.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/AndroidLessons/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/ralative_nestedlayouts.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/drawable-v24/border.xml" value="0.2203125" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2203125" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2203125" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/drawable/img.xml" value="0.14290540540540542" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/border.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/fragmentdesign_layout_fragmentdesign.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layoud_grid2.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_constrait.xml" value="0.25" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_constrait_b.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_frame.xml" value="0.13243243243243244" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_grid.xml" value="0.12331081081081081" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_grid2.xml" value="0.25" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_lineer.xml" value="0.18" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_relative.xml" value="0.22" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/layout_table.xml" value="0.25" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/Layout/layout/app/src/main/res/layout/ralative_nestedlayouts.xml" value="0.25" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_constrait.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_constrait_b.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_frame.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_grid.xml" value="0.33" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_grid2.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_lineer.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_relative.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_responsive_grid.xml" value="0.16" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/layout_table.xml" value="0.1" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/Layout/layout/app/src/main/res/layout/ralative_nestedlayouts.xml" value="0.25" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_constrait.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_constrait_b.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_frame.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_grid.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_grid2.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_linear_nested.xml" value="0.22" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/layout_relative.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/nyks.35/Desktop/Java/java/AndroidStudio/AndroidStudioLessons/UIWidgets/layout/layout/app/src/main/res/layout/ralative_nestedlayouts.xml" value="0.20416666666666666" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.16" />
+      </ProjectState>
+    </option>
+  </component>
+</project>

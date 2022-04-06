@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Tabs</string>
+    <string name="tab_text_1">Tab</string>
+    <string name="tab_text_2">Tab</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragmentB" />
+    <string name="hello_blank_fragmentA" />
+    <string name="textview">TextView</string>
+    <string name="textviewA" />
+</resources>

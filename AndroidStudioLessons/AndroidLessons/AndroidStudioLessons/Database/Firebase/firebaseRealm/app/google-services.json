@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "454749553559",
+    "firebase_url": "https://mydatabase-d01ae-default-rtdb.firebaseio.com",
+    "project_id": "mydatabase-d01ae",
+    "storage_bucket": "mydatabase-d01ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454749553559:android:aff1f6e8a3f7ede9c1bad2",
+        "android_client_info": {
+          "package_name": "com.betelgeuse.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454749553559-3v9pg703jeh54lk6vn6b0f04nqep5n12.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx51G6r0_l7XVSFfOIVZjJxgApZDhRvpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "454749553559-3v9pg703jeh54lk6vn6b0f04nqep5n12.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454749553559:android:45a1c2b99fd6eefcc1bad2",
+        "android_client_info": {
+          "package_name": "com.betelgeuse.firebasehelper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454749553559-3v9pg703jeh54lk6vn6b0f04nqep5n12.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx51G6r0_l7XVSFfOIVZjJxgApZDhRvpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "454749553559-3v9pg703jeh54lk6vn6b0f04nqep5n12.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

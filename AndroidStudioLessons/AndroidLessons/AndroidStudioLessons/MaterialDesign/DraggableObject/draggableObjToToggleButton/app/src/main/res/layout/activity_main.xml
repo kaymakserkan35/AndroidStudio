@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:tag="container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:tag="toggleButton"
+        android:text="ToggleButton" />
+
+    <LinearLayout
+        android:id="@+id/chipContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="chipB"
+            android:text="chipB" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="chipA"
+            android:text="chipA" />
+    </LinearLayout>
+</LinearLayout>

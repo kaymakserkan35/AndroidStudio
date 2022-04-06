@@ -1,0 +1,11 @@
+
+jar dosyasını  app/libs klosörüne kopyala...
+
+android {
+   		 compileSdk 31
+		.........
+
+		dependencies {
+    		implementation(files('libs/MPAndroidChart-v3.0.1.jar'))
+		}
+}

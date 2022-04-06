@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Recyclewiew.draggableCell</string>
+    <string name="todo" />
+    <string name="textview1" />
+    <string name="custom_recyclertext" />
+    <string name="recyclerview_note" />
+    <string name="undo">undo</string>
+</resources>

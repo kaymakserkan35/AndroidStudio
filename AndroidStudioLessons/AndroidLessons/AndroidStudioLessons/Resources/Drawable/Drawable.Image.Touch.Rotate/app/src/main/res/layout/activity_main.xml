@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/surface"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <ImageView
+        android:id="@+id/imageCentered"
+        android:layout_width="152dp"
+        android:layout_height="176dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.239"
+        app:srcCompat="@drawable/rotate"
+        tools:srcCompat="@drawable/rotate" />
+
+    <TextView
+
+        android:id="@+id/imagesDegree"
+        android:layout_width="99dp"
+        android:layout_height="67dp"
+        android:background="#F6DCDC"
+        android:text="imagesDegree"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.785"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageCentered"
+        app:layout_constraintVertical_bias="0.157" />
+
+    <TextView
+        android:id="@+id/twoPointDegree"
+        android:layout_width="95dp"
+        android:layout_height="66dp"
+        android:background="#F6DCDC"
+        android:text="twoPointDegree"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imagesDegree"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageCentered"
+        app:layout_constraintVertical_bias="0.157" />
+
+    <TextView
+        android:id="@+id/touchPoint"
+        android:layout_width="105dp"
+        android:layout_height="59dp"
+        android:background="#F6DCDC"
+        android:text="touchPoint"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imagesDegree"
+        app:layout_constraintVertical_bias="0.236" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
