@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/itemTicker_CardView"
+    android:tag="@+id/itemTicker_CardView"
+    android:layout_gravity="center_horizontal"
+    app:cardBackgroundColor="#5CCAACAC"
+    app:cardCornerRadius="10dp"
+    app:contentPadding="10dp"
+    android:layout_margin="10dp"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+          android:tag="fromCurrency"
+            android:id="@+id/fromCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="fromCurrency" />
+
+        <TextView
+            android:tag="toCurrency"
+            android:id="@+id/toCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="toCurrency" />
+
+
+        <TextView
+            android:tag="rsi_result"
+            android:id="@+id/rsi_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="AL" />
+
+        <TextView
+            android:tag="bollingBand_result"
+            android:id="@+id/bollingBand_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="AL" />
+
+        <TextView
+            android:tag="macd_result"
+            android:id="@+id/macd_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SAT" />
+
+        <Button
+            android:tag="delete_tickerModel"
+            android:id="@+id/delete_tickerModel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="delete" />
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>
