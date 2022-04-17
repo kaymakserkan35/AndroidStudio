@@ -2,6 +2,7 @@ package com.betelgeuse.blockchain.data.output;
 
 import androidx.annotation.Nullable;
 
+import com.betelgeuse.blockchain.H;
 import com.betelgeuse.blockchain.data.IDatabase;
 import com.betelgeuse.blockchain.data.cache.ICache;
 import com.betelgeuse.blockchain.data.dataListener.TickerDTOListListener;
@@ -21,24 +22,27 @@ public class DataManager  extends AdvancedDataManager {
         this.cache = cache;
         this.database = database;
     }
-    private void readTickersOfDate (String date , TickerDTOListListener listener) {
-        // cache den al!!...
-        if (true) {
-            database.readTickersOfDate(date, listener);
-        } else {
-        }
-    }
-    private void readTickersFromDateToNow (String date, @Nullable TickerDTOListListener listener) {
-
-    }
-    private void readTickerOfDate (String toCurrency, String dateValue, @Nullable TickerDTOListener listener) {
-
-    }
-    private void readTickerFromDateToNow (String toCurrency, String fromDate, @Nullable TickerDTOListListener listener) {
-
-    }
     public  void  readTickerHistory(String fromCurrency, String toCurrency, int history, TickerDTOListListener listener){
-        readTickerFromDateToNow("BTC","2022-03-01",listener);
+
+        if (fromCurrency.equalsIgnoreCase(this.baseCurrency)) {
+            String date = getDaysAgoUTC_AsSimpleDateFormatString(history);
+            database.readTickerFromDateToNow(toCurrency, date, tickerList -> {
+                cache.createTickerList(tickerList);
+                listener.onSuccess(tickerList);
+            });
+        }
+        if (toCurrency.equalsIgnoreCase(baseCurrency)) {
+            String date = getDaysAgoUTC_AsSimpleDateFormatString(history);
+            database.readTickerFromDateToNow(toCurrency, date, tickerList -> {
+                    reverseTickers(tickerList);
+                    cache.createTickerList(tickerList);
+                    listener.onSuccess(tickerList);
+            });
+        }
+        if (!fromCurrency.equalsIgnoreCase(baseCurrency) && toCurrency.equalsIgnoreCase(baseCurrency)) {
+            String date = getDaysAgoUTC_AsSimpleDateFormatString(history);
+        }
+
     }
     public  void  readUserOptionsByEmail(String email, UserOptionDTOListListener listener){
         List<UserOptionDTO> userOptionDTOList =    cache.readUserOptionsAllByEmail(email);

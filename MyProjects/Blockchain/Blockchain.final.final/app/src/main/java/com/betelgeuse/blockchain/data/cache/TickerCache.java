@@ -33,6 +33,10 @@ public class TickerCache extends SQLiteOpenHelper implements  ITickerCache {
     public boolean createTicker (TickerDTO ticker) {
         return false;
     }
+    @Override
+    public boolean createTickerList (List<TickerDTO> tickers) {
+        return false;
+    }
 
     @Override
     public TickerDTO readTicker (String id) {

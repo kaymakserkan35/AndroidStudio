@@ -24,7 +24,7 @@ public abstract class Average {
         this.dataList = dataList;
         return this;
     }
-    public void sortDataByCalendar (Sort sort) {
+    public Average sortDataByCalendar (Sort sort) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             dataList.sort(new Comparator<Data>() {
                 @Override
@@ -35,7 +35,8 @@ public abstract class Average {
             });
 
         } else H.errorLog(this.getClass().getSimpleName(), "sortDataByDate", "(Build.VERSION.SDK_INT eterli degil!");
-    }
-    public abstract List<Data> analyze ( );
 
+        return  this;
+    }
+    public abstract Average analyze ( );
 }

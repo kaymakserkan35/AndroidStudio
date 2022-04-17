@@ -1,6 +1,5 @@
 package com.betelgeuse.blockchain.core.controller;
 
-
 import android.content.Context;
 
 import com.betelgeuse.blockchain.core.indicator.Data;
@@ -17,11 +16,12 @@ import com.betelgeuse.blockchain.userinterface.Model.InformationModelListListene
 import com.betelgeuse.blockchain.userinterface.Model.UserOptionModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CoreController {
+public class InformationCoreController {
 
-    public CoreController (Context context){
+    public InformationCoreController (Context context){
         this.database = new DataManager(new FirebaseDB(FirebaseFirestore.getInstance()),new Cache(context));
     }
     DataManager         database;
@@ -31,17 +31,16 @@ public class CoreController {
 
     public void getData (String email, InformationModelListListener listener) {
         readUserOptionsByEmail(email, (List<UserOptionDTO> userOptionDTOList) -> {
-            int count = 0; int size = 1;
+            List<InformationModel> infos = new ArrayList<>();
             for (UserOptionDTO userOptionDTO : userOptionDTOList) {
-                count = count +1;
-                int finalCount = count;
                 database.readTickerHistory(userOptionDTO.fromCurrency, userOptionDTO.toCurrency, userOptionDTO.history, (List<TickerDTO> tickerList) -> {
                     List<Data> dataList = Data.convertTickerListToDataList(tickerList);
                     Indicator indicator = new RelativeStrengthIndex(dataList, userOptionDTO.period);
                     indicator.analyze();
-                    if (finalCount == size) listener.onSuccess(InformationModel.convertDataListToInfoModelList(dataList));
+                    infos.addAll(InformationModel.convertDataListToInfoModelList(dataList));
                 });
             }
+            listener.onSuccess(infos);
         });
 
     }

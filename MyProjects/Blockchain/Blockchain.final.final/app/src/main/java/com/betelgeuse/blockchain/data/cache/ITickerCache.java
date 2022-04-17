@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface ITickerCache {
     public boolean createTicker(TickerDTO ticker);
+    public boolean createTickerList(List<TickerDTO> tickers);
     public TickerDTO readTicker(String id);
     public List<TickerDTO> readTickersAll();
     public  List<TickerDTO> readTickersByQuery();

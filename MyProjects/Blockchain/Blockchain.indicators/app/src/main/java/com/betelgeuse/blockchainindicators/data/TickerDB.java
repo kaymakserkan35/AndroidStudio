@@ -126,6 +126,7 @@ public class TickerDB extends ADatabase implements ITickerDB {
         collRef.whereGreaterThanOrEqualTo("calendar", fromDate).get().addOnCompleteListener((Task<QuerySnapshot> task) -> {
             if (task.isSuccessful()) {
                 List<DocumentSnapshot> dSList = task.getResult().getDocuments();
+
                 for (DocumentSnapshot ds : dSList) {
                     TickerDTO tickerDTO = ds.toObject(TickerDTO.class);
                     tickerList.add(tickerDTO);

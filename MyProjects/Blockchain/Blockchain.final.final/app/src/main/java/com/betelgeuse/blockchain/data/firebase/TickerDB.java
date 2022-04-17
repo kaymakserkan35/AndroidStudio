@@ -17,7 +17,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -115,34 +117,64 @@ public class TickerDB extends ADatabase implements ITickerDB {
         });
     }
 
-    @Override // does work...
+    @Override // does  work...
     public void readTickerFromDateToNow (String toCurrency, String fromDate, @Nullable TickerDTOListListener listener) {
 
-        List<TickerDTO> tickerList = new ArrayList<>();
         Date dateObj = parseStringDateToDateObject(fromDate);
         String fromYear = String.valueOf(dateObj.getYear());
+        String toYear = getYearNowOfCurrentTimeZone();
+        int fromYearINT = Integer.valueOf(fromYear);
+        int toYearINT = Integer.valueOf(toYear);
+        List<TickerDTO> returnTickerList = new ArrayList<>();
 
-        for (int year =
-             Integer.valueOf(fromYear); year <= Integer.valueOf(getYearNowOfCurrentTimeZone()); year++) {
-            CollectionReference collRef =
-                    tickerCollection.document("USD" + "-" + toCurrency).collection(String.valueOf(year));
-            collRef.whereGreaterThanOrEqualTo("calendar", fromDate).get().addOnCompleteListener((Task<QuerySnapshot> task) -> {
-                List<DocumentSnapshot> dSList = task.getResult().getDocuments();
-                for (DocumentSnapshot ds : dSList) {
-                    TickerDTO tickerDTO = ds.toObject(TickerDTO.class);
-                    tickerList.add(tickerDTO);
-                    H.debugLog("TAG", "onComplete: " + tickerDTO.getSymbol() + tickerDTO.getCalendar());
+        do {
+            int finalFromYearINT = fromYearINT;
+            readTickerFromDateTo_EndOfTheYear("USD", toCurrency, fromDate, tickerList -> {
+                returnTickerList.addAll(tickerList);
+                if ((finalFromYearINT == toYearINT) && listener != null) {
+                    listener.onSuccess(returnTickerList);
                 }
             });
+            fromYearINT = fromYearINT + 1;
+            fromDate = fromYearINT + "-" + "01" + "-" + "01";
 
-        }
+        } while (fromYearINT <= toYearINT);
 
-        /*-----------------------------------------------------*/
-        if (listener != null) {
-            listener.onSuccess(tickerList);
-        }
 
     }
 
+
+    /*--------------------------------*/
+    private void readTickerFromDateTo_EndOfTheYear (String fromCurrency, String toCurrency, String fromDate, @Nullable TickerDTOListListener listener) {
+        // does work ...
+        String tickerId = (fromCurrency + "-" + toCurrency).toUpperCase();
+        Date dateObj = parseStringDateToDateObject(fromDate);
+        String yearSTRİNG = String.valueOf(dateObj.getYear());
+
+        CollectionReference collRef = tickerCollection.document(tickerId).collection(yearSTRİNG);
+        List<TickerDTO> tickerList = new ArrayList<>();
+        collRef.whereGreaterThanOrEqualTo("calendar", fromDate).get().addOnCompleteListener((Task<QuerySnapshot> task) -> {
+            if (task.isSuccessful()) {
+                List<DocumentSnapshot> dSList = task.getResult().getDocuments();
+                H.debugLog(this.getClass().getSimpleName(), "readTickerFromDateTo_EndOfTheYear" , String.valueOf(dSList.size()));
+                for (DocumentSnapshot ds : dSList) {
+
+                    TickerDTO tickerDTO = ds.toObject(TickerDTO.class);
+                    tickerList.add(tickerDTO);
+                    H.debugLog(this.getClass().getSimpleName(), "readTickerFromDateTo_EndOfTheYear: " + tickerDTO.getSymbol() + tickerDTO.getCalendar());
+                }
+                /*-----------returning tickers-------------------------*/
+                if (listener != null) {
+                    listener.onSuccess(tickerList);
+                }
+            } else {
+                H.errorLog(this.getClass().getSimpleName(), "readTickerFromDateTo_EndOfTheYear", task.getException().getLocalizedMessage());
+            }
+        });
+
+
+    }
+    private void readTickerFromDateTo_EndOfTheYearLIVE (String fromCurrency, String toCurrency, String fromDate, @Nullable TickerDTOListListener listener) {
+    }
 }
 

@@ -15,11 +15,11 @@ public abstract class AData {
     }
 
     double candle;
-    String calendar;
+    public String calendar;
     double high;
     double low;
-    double price;
-    public    String symbol;
+    public double price;
+    public String symbol;
     double timeStamp;
     double open;
 }

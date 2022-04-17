@@ -8,7 +8,7 @@ public class MovingAverageConvergenceDivergence extends Indicator {
     }
 
     @Override
-    public List<Data> analyze ( ) {
-        return null;
+    public Indicator analyze ( ) {
+        return  this;
     }
 }

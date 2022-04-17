@@ -2,8 +2,7 @@ package com.betelgeuse.blockchain.core.indicator;
 
 import com.betelgeuse.blockchain.core.indicator.Data;
 
-public class RsiData {
-
+ public class RsiData {
 
     public RsiData (Data data) {
         double change = data.price - data.open;
@@ -26,6 +25,6 @@ public class RsiData {
     double averageUpward;
     double averageDownward;
     double averagePrice;
-    double relativeStrength;
-    double relativeStrengthIndex;
+    public double relativeStrength;
+    public double relativeStrengthIndex;
 }

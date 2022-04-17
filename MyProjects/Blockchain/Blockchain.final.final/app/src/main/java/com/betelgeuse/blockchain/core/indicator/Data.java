@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Data extends AData {
-    RsiData           rsiData;
+  public   RsiData           rsiData;
     BollingerBandData bollingerBandData;
     protected Data initRsiData () {
         this.rsiData = new RsiData(this);
@@ -18,12 +18,13 @@ public class Data extends AData {
     }
     public Data (TickerDTO tickerDTO) {
         super(tickerDTO);
+        initRsiData().initBollingerBandData();
     }
     public static List<Data> convertTickerListToDataList (List<TickerDTO> tickers) {
 
         List<Data> dataList = new ArrayList<>();
         for (TickerDTO ticker : tickers) {
-            Data data = new Data(ticker);
+            Data data = new Data(ticker).initRsiData().initBollingerBandData();
             dataList.add(data);
         }
 

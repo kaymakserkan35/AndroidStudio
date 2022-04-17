@@ -1,6 +1,7 @@
 package com.betelgeuse.blockchain.userinterface.Model;
 
 import com.betelgeuse.blockchain.core.indicator.Data;
+import com.betelgeuse.blockchain.core.indicator.RsiData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public class InformationModel {
     public  InformationModel(Data data){
         this.fromCurrency = data.symbol.split("/")[0];
         this.toCurrency = data.symbol.split("/")[1];
+
     }
 
     public  static List<InformationModel> convertDataListToInfoModelList(List<Data> dataList){

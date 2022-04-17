@@ -11,8 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class Indicator {
-    private Average    average;
-    private Period     period;
+    protected Average    average;
+    protected Period     period;
     protected List<Data> dataList;
 
     protected Indicator (List<Data> dataList, @Nullable Period period) {
@@ -23,7 +23,7 @@ public abstract class Indicator {
 
     }
 
-    public void sortDataListByCalendar (Sort sort) {
+    public Indicator sortDataListByCalendar (Sort sort) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             dataList.sort(new Comparator<Data>() {
                 @Override
@@ -34,14 +34,15 @@ public abstract class Indicator {
             });
         } else
             H.errorLog(this.getClass().getSimpleName(), "sortDataByDate", "(Build.VERSION.SDK_INT eterli degil!");
+            return  this;
     }
 
     public <subAverage extends Average> subAverage setAverage (Class<subAverage> subAverageType) {
         subAverage obj = null;
         try {
             Class<?> clazz = Class.forName(subAverageType.getName());
-            Constructor<?> ctor = clazz.getConstructor(List.class, Period.class);
-            Object object = ctor.newInstance(this.dataList, this.period);
+            Constructor<?> constructor = clazz.getConstructor(List.class, Period.class);
+            Object object = constructor.newInstance(this.dataList, this.period);
             obj = (subAverage) object;
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,6 +50,6 @@ public abstract class Indicator {
         return obj;
     }
 
-    public abstract List<Data> analyze ( );
+    public abstract Indicator analyze ( );
 
 }

@@ -10,9 +10,9 @@ import com.betelgeuse.blockchain.data.dto.UserOptionDTO;
 import java.util.List;
 
 public class Cache implements  ICache {
-    Context context;
+
     public Cache(@Nullable Context context){
-        this.context = context;
+
         optionCache = new OptionCache(context);
         tickerCache = new TickerCache(context);
     }
@@ -52,6 +52,11 @@ public class Cache implements  ICache {
 
     @Override
     public boolean createTicker (TickerDTO ticker) {
+        return false;
+    }
+
+    @Override
+    public boolean createTickerList (List<TickerDTO> tickers) {
         return false;
     }
 

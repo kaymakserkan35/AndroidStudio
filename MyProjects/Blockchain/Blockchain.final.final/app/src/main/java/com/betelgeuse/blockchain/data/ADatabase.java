@@ -23,29 +23,22 @@ public abstract class ADatabase {
         myDate = new MyDate();
     }
     public String generateUniqueID ( ) {
-        String uniqueID = getDateNowOfTimeZone(timezoneOfLondra) + "_" + UUID.randomUUID().toString();
+        String uniqueID = getDate_AsSimpleDateFormatString(timezoneOfLondra) + "_" + UUID.randomUUID().toString();
         return uniqueID;
     }
 
-    public String getDateNowOfTimeZone (String timezone) {
-      return   myDate.getDateNowOfTimeZone(timezone,null);
-      // output : 18-03-2022
+    public String getDaysAgoUTC_AsSimpleDateFormatString(int daysAgo){
+      return myDate.getDaysAgoUTC_AsSimpleDateFormatString(daysAgo);
     }
-    public String getDateNowOfCurrentTimeZone ( ) {
-      return   myDate.getDateNowOfCurrentTimeZone();
+    public String getDate_AsSimpleDateFormatString (String timezone) {
+      return   myDate.getDate_AsSimpleDateFormatString();
       // output : 18-03-2022
-    }
-    public String getYearNowOfTimezone (String timezone) {
-     return    myDate.getYearNowOfTimezone(timezone);
     }
     public String getYearNowOfCurrentTimeZone ( ) {
-      return   myDate.getYearNowOfCurrentTimeZone();
-    }
-    public Date convertLocalDateToUTC(Date date) {
-       return  myDate.convertDateToDateUTC(date);
+      return   myDate.getYearUTC();
     }
     public Date parseStringDateToDateObject(String date) {
-        return myDate.parseStringDateToDateObject(date);
+        return myDate.convertSimpleDateFormatStringToDateObject(date);
     }
     /*--------------------------------------------------------------------*/
     private Currency getCurrency (Locale locale) {
